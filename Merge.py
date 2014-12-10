@@ -18,7 +18,7 @@ def image_resize(img, size=(1500, 1100)):
         pass
     return img
 
-def image_merge(images, output_dir='output/', output_name='merge.jpg', \
+def image_merge(images, output_dir='output/', output_name='merge.tif', \
                 restriction_max_width=None, restriction_max_height=None):
     """垂直合并多张图片
     images - 要合并的图片路径列表
