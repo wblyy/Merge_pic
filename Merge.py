@@ -18,8 +18,8 @@ def image_resize(img, size=(1500, 1100)):
         pass
     return img
 
-def image_merge(images, output_dir='output/', output_name='merge.tif', \
-                restriction_max_width=None, restriction_max_height=None):
+def image_merge(img_path, output_dir='output/', output_name='merge.tif', \
+                restriction_max_width=3000, restriction_max_height=3000):
     """垂直合并多张图片
     images - 要合并的图片路径列表
     ouput_dir - 输出路径
@@ -30,40 +30,43 @@ def image_merge(images, output_dir='output/', output_name='merge.tif', \
     max_width = 0
     total_height = 0
     # 计算合成后图片的宽度（以最宽的为准）和高度
-    for img_path in images:
-        if os.path.exists(img_path):
-            img = Image.open(img_path)
-            width, height = img.size
-            if width > max_width:
-                max_width = width
-            total_height += height
+    for file in os.listdir(img_path):
+        #if os.path.exists(img_path):
+        img = Image.open(path+file)
+        width, height = img.size
+        if width > max_width:
+            max_width = width
+        total_height += height
 
     # 产生一张空白图
     new_img = Image.new('RGB', (max_width, total_height), 255)
     # 合并
     x = y = 0
-    for img_path in images:
-        if os.path.exists(img_path):
-            img = Image.open(img_path)
-            width, height = img.size
-            new_img.paste(img, (x, y))
-            y += height
+    for file in os.listdir(img_path):
+        #if os.path.exists(img_path):
+        img = Image.open(path+file)
+        width, height = img.size
+        if y>restriction_max_height:
+            x +=width
+            y=0
+        new_img.paste(img, (x, y))
+        y += height
 
-    if restriction_max_width and max_width >= restriction_max_width:
+    #if restriction_max_width and max_width >= restriction_max_width:
         # 如果宽带超过限制
         # 等比例缩小
-        ratio = restriction_max_height / float(max_width)
-        max_width = restriction_max_width
-        total_height = int(total_height * ratio)
-        new_img = image_resize(new_img, size=(max_width, total_height))
+    #    ratio = restriction_max_height / float(max_width)
+    #    max_width = restriction_max_width
+    #    total_height = int(total_height * ratio)
+    #    new_img = image_resize(new_img, size=(max_width, total_height))
 
-    if restriction_max_height and total_height >= restriction_max_height:
+    #if restriction_max_height and total_height >= restriction_max_height:
         # 如果高度超过限制
         # 等比例缩小
-        ratio = restriction_max_height / float(total_height)
-        max_width = int(max_width * ratio)
-        total_height = restriction_max_height
-        new_img = image_resize(new_img, size=(max_width, total_height))
+    #    ratio = restriction_max_height / float(total_height)
+    #    max_width = int(max_width * ratio)
+    #    total_height = restriction_max_height
+    #    new_img = image_resize(new_img, size=(max_width, total_height))
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -72,4 +75,4 @@ def image_merge(images, output_dir='output/', output_name='merge.tif', \
     return save_path
     
 if __name__ == '__main__':
-    image_merge(images=['1C7S.tif', '2BSE.tif', '2bya.tif'])
+    image_merge(img_path='./bulk_tif')
