@@ -32,19 +32,19 @@ def image_merge(img_path, output_dir='output/', output_name='merge.tif', \
     # 计算合成后图片的宽度（以最宽的为准）和高度
     for file in os.listdir(img_path):
         #if os.path.exists(img_path):
-        img = Image.open(path+file)
+        img = Image.open(img_path+file)
         width, height = img.size
         if width > max_width:
             max_width = width
         total_height += height
 
     # 产生一张空白图
-    new_img = Image.new('RGB', (max_width, total_height), 255)
+    new_img = Image.new('RGB', (300, 3000), 'white')
     # 合并
     x = y = 0
     for file in os.listdir(img_path):
         #if os.path.exists(img_path):
-        img = Image.open(path+file)
+        img = Image.open(img_path+file)
         width, height = img.size
         if y>restriction_max_height:
             x +=width
@@ -75,4 +75,4 @@ def image_merge(img_path, output_dir='output/', output_name='merge.tif', \
     return save_path
     
 if __name__ == '__main__':
-    image_merge(img_path='./bulk_tif')
+    image_merge(img_path='./bulk_tif/')
